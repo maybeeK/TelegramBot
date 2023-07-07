@@ -16,5 +16,6 @@ namespace TelegramBot.API.Data
         }
 
         public DbSet<Course> Courses { get; set; }
+        public DbSet<UserTag> UserTags { get; set; }
     }
 }
