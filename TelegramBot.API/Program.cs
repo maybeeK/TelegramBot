@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TelegramBot.API.Data;
+using TelegramBot.API.Services;
+using TelegramBot.API.Services.Interfaces;
 
 namespace TelegramBot.API
 {
@@ -16,6 +18,8 @@ namespace TelegramBot.API
             {
                 opt.UseSqlServer(connectionString);
             });
+            builder.Services.AddScoped<ICourseService, CourseService>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
