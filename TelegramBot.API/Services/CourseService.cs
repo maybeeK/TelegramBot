@@ -13,7 +13,7 @@ namespace TelegramBot.API.Services
             _context = context;
         }
 
-        public async Task<Course> AddACourse(Course newCourse)
+        public async Task<Course> AddCourse(Course newCourse)
         {
             var addedCourse = await _context.Courses.AddAsync(newCourse);
 
@@ -46,6 +46,11 @@ namespace TelegramBot.API.Services
         public async Task<Course> GetCourse(int id)
         {
             return await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<Course>> GetCoursesByTag(string tag)
+        {
+            return (await _context.Courses.ToListAsync()).Where(c=>c.Name.ToLower().Contains(tag.ToLower()));
         }
     }
 }

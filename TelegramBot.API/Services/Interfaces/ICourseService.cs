@@ -10,8 +10,9 @@ namespace TelegramBot.API.Services.Interfaces
     public interface ICourseService
     {
         Task<IEnumerable<Course>> GetAllCourses();
+        Task<IEnumerable<Course>> GetCoursesByTag(string tag);
         Task<Course> GetCourse(int id);
-        Task<Course> AddACourse(Course newCourse);
+        Task<Course> AddCourse(Course newCourse);
         Task<Course> DeleteCourse(int id);
     }
 }
