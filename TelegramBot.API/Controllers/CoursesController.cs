@@ -83,10 +83,10 @@ namespace TelegramBot.API.Controllers
 
                 if (course == null)
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
 
-                return NotFound();
+                return Ok(course);
             }
             catch (Exception e)
             {
