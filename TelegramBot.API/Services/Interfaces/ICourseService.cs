@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TelegramBot.API.Entities;
+using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.API.Services.Interfaces
 {
@@ -12,7 +13,7 @@ namespace TelegramBot.API.Services.Interfaces
         Task<IEnumerable<Course>> GetAllCourses();
         Task<IEnumerable<Course>> GetCoursesByTag(string tag);
         Task<Course> GetCourse(int id);
-        Task<Course> AddCourse(Course newCourse);
+        Task<Course> AddCourse(CourseDto newCourse);
         Task<Course> DeleteCourse(int id);
     }
 }

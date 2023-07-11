@@ -2,6 +2,7 @@
 using TelegramBot.API.Data;
 using TelegramBot.API.Entities;
 using TelegramBot.API.Services.Interfaces;
+using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.API.Services
 {
@@ -13,9 +14,17 @@ namespace TelegramBot.API.Services
             _context = context;
         }
 
-        public async Task<Course> AddCourse(Course newCourse)
+        public async Task<Course> AddCourse(CourseDto newCourse)
         {
-            var addedCourse = await _context.Courses.AddAsync(newCourse);
+            var coursetoAdd = new Course()
+            {
+                Id = newCourse.Id,
+                Name = newCourse.Name,
+                Description = newCourse.Description,
+                Link = newCourse.Link
+            };
+
+            var addedCourse = await _context.Courses.AddAsync(coursetoAdd);
 
             await _context.SaveChangesAsync();
 
