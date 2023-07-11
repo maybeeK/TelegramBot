@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TelegramBot.API.Entities;
+using TelegramBot.API.Extensions;
 using TelegramBot.API.Services.Interfaces;
+using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.API.Controllers
 {
@@ -15,7 +17,7 @@ namespace TelegramBot.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Course>>> GetAllCourses()
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCourses()
         {
             try
             {
@@ -26,7 +28,9 @@ namespace TelegramBot.API.Controllers
                     return NoContent();
                 }
 
-                return Ok(courses);
+                var coursesDto = courses.ConvertToDto(); 
+
+                return Ok(coursesDto);
             }
             catch (Exception e)
             {
@@ -35,7 +39,7 @@ namespace TelegramBot.API.Controllers
         }
 
         [HttpGet("{tag}")]
-        public async Task<ActionResult<IEnumerable<Course>>> GetCoursesByTag(string tag)
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesByTag(string tag)
         {
             try
             {
@@ -46,7 +50,9 @@ namespace TelegramBot.API.Controllers
                     return NoContent();
                 }
 
-                return Ok(courses);
+                var coursesDto = courses.ConvertToDto();
+
+                return Ok(coursesDto);
             }
             catch (Exception e)
             {
@@ -55,7 +61,7 @@ namespace TelegramBot.API.Controllers
         }
 
         [HttpPost("Course/New")]
-        public async Task<ActionResult<Course>> AddCourse([FromBody] Course courseToAdd)
+        public async Task<ActionResult<CourseDto>> AddCourse([FromBody] CourseDto courseToAdd)
         {
             try
             {
@@ -66,7 +72,9 @@ namespace TelegramBot.API.Controllers
                     return BadRequest();
                 }
 
-                return Ok(added);
+                var addedDto = added.ConvertToDto();
+
+                return Ok(addedDto);
             }
             catch (Exception e)
             {
@@ -75,7 +83,7 @@ namespace TelegramBot.API.Controllers
         }
 
         [HttpDelete("Course/{id:int}/Delete")]
-        public async Task<ActionResult<Course>> DeleteCourse(int id)
+        public async Task<ActionResult<CourseDto>> DeleteCourse(int id)
         {
             try
             {
@@ -86,7 +94,9 @@ namespace TelegramBot.API.Controllers
                     return NotFound();
                 }
 
-                return Ok(course);
+                var courseDto = course.ConvertToDto();
+
+                return Ok(courseDto);
             }
             catch (Exception e)
             {
