@@ -18,8 +18,9 @@ namespace TelegramBot.API
             {
                 opt.UseSqlServer(connectionString);
             });
-            builder.Services.AddScoped<ICourseService, CourseService>();
 
+            builder.Services.AddScoped<ICourseService, CourseService>();
+            builder.Services.AddScoped<IUserTagService, UserTagService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
