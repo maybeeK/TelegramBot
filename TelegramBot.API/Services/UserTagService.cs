@@ -31,9 +31,9 @@ namespace TelegramBot.API.Services
 
             await _context.UserTags.AddRangeAsync(userTags);
 
-            await _context.SaveChangesAsync();
+            var addedTags = _context.ChangeTracker.Entries<UserTag>().Where(e => e.State == EntityState.Added).Select(e => e.Entity).ToList();
 
-            var addedTags = _context.ChangeTracker.Entries<UserTag>().Where(e => e.State == EntityState.Added).Select(e => e.Entity);
+            await _context.SaveChangesAsync();
             
             return addedTags;
         }
