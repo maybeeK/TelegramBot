@@ -32,8 +32,10 @@ namespace TelegramBot.API.Services
             await _context.UserTags.AddRangeAsync(userTags);
 
             await _context.SaveChangesAsync();
+
+            var addedTags = _context.ChangeTracker.Entries<UserTag>().Where(e => e.State == EntityState.Added).Select(e => e.Entity);
             
-            return userTags;
+            return addedTags;
         }
 
         public async Task<IEnumerable<UserTag>> DeleteTagsByUserId(long userId)

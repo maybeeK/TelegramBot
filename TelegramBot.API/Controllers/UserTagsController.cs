@@ -69,7 +69,7 @@ namespace TelegramBot.API.Controllers
 
         }
 
-        [HttpDelete]
+        [HttpDelete("{userId:long}")]
         public async Task<ActionResult<IEnumerable<UserTag>>> DeleteTagsByUserId(long userId)
         {
             try
