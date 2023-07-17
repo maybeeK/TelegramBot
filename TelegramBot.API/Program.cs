@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TelegramBot.API.BackgroundServices;
 using TelegramBot.API.Data;
 using TelegramBot.API.Services;
 using TelegramBot.API.Services.Interfaces;
@@ -18,6 +19,8 @@ namespace TelegramBot.API
             {
                 opt.UseSqlServer(connectionString);
             });
+
+            builder.Services.AddHostedService<CoursesBackgroundService>();
 
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUserTagService, UserTagService>();
