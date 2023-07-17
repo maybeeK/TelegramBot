@@ -1,0 +1,73 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TelegramBot.API.BackgroundServices;
+using TelegramBot.API.CourseParsers;
+using TelegramBot.API.Entities;
+using TelegramBot.API.Services;
+
+namespace TelegramBot.Tests
+{
+    public class ParsersTests
+    {
+        [Fact]
+        public async void ITeaParserTest()
+        {
+            // Arrange
+            List<Course> courses;
+            ITeaParser Parser = new();
+
+            // Act
+
+            courses = (await Parser.Parse()).ToList();
+
+            // Assert
+            Assert.NotEmpty(courses);
+        }
+        [Fact]
+        public async void MateAcademyParserTest()
+        {
+            // Arrange
+            List<Course> courses;
+            MateAcademyParser Parser = new();
+
+            // Act
+
+            courses = (await Parser.Parse()).ToList();
+
+            // Assert
+            Assert.NotEmpty(courses);
+        }
+        [Fact]
+        public async void GoITParserTest()
+        {
+            // Arrange
+            List<Course> courses;
+            GoITParser Parser = new();
+
+            // Act
+
+            courses = (await Parser.Parse()).ToList();
+
+            // Assert
+            Assert.NotEmpty(courses);
+        }
+        [Fact]
+        public async void BeetRootAcademyParserTest()
+        {
+            // Arrange
+            List<Course> courses;
+            BeetRootAcademyParser Parser = new();
+
+            // Act
+
+            courses = (await Parser.Parse()).ToList();
+
+            // Assert
+            Assert.NotEmpty(courses);
+        }
+    }
+}
