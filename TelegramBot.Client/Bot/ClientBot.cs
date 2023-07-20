@@ -8,6 +8,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.CommandsFactory;
 using TelegramBot.Client.Extensions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TelegramBot.Client.Bot
 {
@@ -26,7 +27,7 @@ namespace TelegramBot.Client.Bot
             var bot = new TelegramBotClient(_key);
             var user = await bot.GetMeAsync();
             int offset = 0;
-
+            Console.WriteLine(user.Username + " started at " + DateTime.Now);
             while (!_cancellationToken.IsCancellationRequested)
             {
                 var updates = new Update[0];
@@ -63,6 +64,8 @@ namespace TelegramBot.Client.Bot
                 string stringCommand = string.Empty;
                 string body = string.Empty;
                 string replyText = string.Empty;
+                ParseMode? parseMode = ParseMode.Markdown;
+                Console.WriteLine(update.Message.Chat.Id + " < " + update.Message.From.Username + " - " + gettingText);
 
                 if (gettingText.HasCommand())
                 {
@@ -76,9 +79,9 @@ namespace TelegramBot.Client.Bot
 
                 var command = _factory.Create(stringCommand);
 
-                replyText = await command.Proccess(body: body, userId: update.Message.Chat.Id, parseMode: null);
-
-                await bot.SendTextMessageAsync(update.Message.Chat.Id, replyText, disableWebPagePreview: true);
+                replyText = await command.Proccess(body: body, userId: update.Message.Chat.Id, parseMode: parseMode);
+;
+                await bot.SendTextMessageAsync(update.Message.Chat.Id, replyText, disableWebPagePreview: true, parseMode: parseMode);
             }
             catch (Exception ex)
             {
