@@ -10,7 +10,7 @@ namespace TelegramBot.Client.Commands
 {
     public class StartCommand:ICommand
     {
-        public Task<string> Proccess(string? body = null, long? userId = null, ParseMode? parseMode = null)
+        public Task<string> Process(string? body = null, long? userId = null, ParseMode? parseMode = null)
         {
             return Task.FromResult($"Hello! I am Bot!\n/help - for more commands!");
         }

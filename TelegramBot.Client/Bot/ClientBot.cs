@@ -79,7 +79,7 @@ namespace TelegramBot.Client.Bot
 
                 var command = _factory.Create(stringCommand);
 
-                replyText = await command.Proccess(body: body, userId: update.Message.Chat.Id, parseMode: parseMode);
+                replyText = await command.Process(body: body, userId: update.Message.Chat.Id, parseMode: parseMode);
 ;
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, replyText, disableWebPagePreview: true, parseMode: parseMode);
             }

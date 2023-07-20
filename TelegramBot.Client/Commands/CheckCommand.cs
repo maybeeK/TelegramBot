@@ -12,7 +12,7 @@ namespace TelegramBot.Client.Commands
 {
     public class CheckCommand : ICommand
     {
-        public async Task<string> Proccess(string? body = null, long? userId = null, ParseMode? parseMode = null)
+        public async Task<string> Process(string? body = null, long? userId = null, ParseMode? parseMode = null)
         {
             if (!IsBodyValid(body))
             {
