@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,32 +9,41 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.CommandsFactory;
 using TelegramBot.Client.Extensions;
+using TelegramBot.Client.Services.Interfaces;
+using TelegramBot.Shared.DTOs;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace TelegramBot.Client.Bot
 {
     public class ClientBot
     {
-        private readonly string _key;
+        private readonly TelegramBotClient _bot;
+        private HubConnection _hubConnection;
+        private INewCourseNotifier _newCourseNotifier;
         private CommandFactory _factory;
-        public ClientBot(string key)
+        public ClientBot(string key) //TODO Fix configuration
         {
-            _key = key;
+            _bot = new TelegramBotClient(key);
             _factory = new CommandFactory();
+
+            _hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7103/coursehub")
+                                    .Build();
+            _hubConnection.On("GetNewAddedCoursesOnClient", (IEnumerable<CourseDto> courses) => _newCourseNotifier.Notify(courses));
+
         }
 
         public async Task StartLoopAsync(CancellationToken _cancellationToken)
         {
-            var bot = new TelegramBotClient(_key);
-            var user = await bot.GetMeAsync();
+            await _hubConnection.StartAsync();
+
             int offset = 0;
-            Console.WriteLine(user.Username + " started at " + DateTime.Now);
+            Console.WriteLine("Started at " + DateTime.Now);
             while (!_cancellationToken.IsCancellationRequested)
             {
                 var updates = new Update[0];
                 try
                 {
-                    updates = await bot.GetUpdatesAsync(offset: offset);
+                    updates = await _bot.GetUpdatesAsync(offset: offset);
 
                 }
                 catch (TaskCanceledException)
@@ -48,14 +58,14 @@ namespace TelegramBot.Client.Bot
                 foreach (var update in updates)
                 {
                     offset = update.Id + 1;
-                    ProcessUpdate(bot, update, user);
+                    ProcessUpdate(_bot, update);
                 }
 
                 await Task.Delay(1000);
             }
         }
 
-        private async Task ProcessUpdate(TelegramBotClient bot, Update update, User user)
+        private async Task ProcessUpdate(TelegramBotClient bot, Update update)
         {
             try
             {
