@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using TelegramBot.API.BackgroundServices;
 using TelegramBot.API.Data;
+using TelegramBot.API.Hubs;
 using TelegramBot.API.Services;
 using TelegramBot.API.Services.Interfaces;
 
@@ -24,6 +26,15 @@ namespace TelegramBot.API
 
             builder.Services.AddScoped<ICourseService, CourseService>();
             builder.Services.AddScoped<IUserTagService, UserTagService>();
+            builder.Services.AddSingleton<CourseHub>();
+            builder.Services.AddSignalR();
+
+            builder.Services.AddResponseCompression(options =>
+            {
+                options.MimeTypes = ResponseCompressionDefaults
+                                    .MimeTypes
+                                    .Concat(new[] { "application/octet-stream" });
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -32,6 +43,7 @@ namespace TelegramBot.API
 
             var app = builder.Build();
 
+            app.UseResponseCompression();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -45,6 +57,7 @@ namespace TelegramBot.API
 
 
             app.MapControllers();
+            app.MapHub<CourseHub>("/coursehub");
 
             app.Run();
         }

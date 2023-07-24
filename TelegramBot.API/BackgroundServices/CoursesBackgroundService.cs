@@ -1,6 +1,7 @@
 ﻿using TelegramBot.API.CourseParsers.Interfaces;
 using TelegramBot.API.Entities;
 using TelegramBot.API.Extensions;
+using TelegramBot.API.Hubs;
 using TelegramBot.API.Services;
 using TelegramBot.API.Services.Interfaces;
 
@@ -10,9 +11,10 @@ namespace TelegramBot.API.BackgroundServices
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IEnumerable<ICourseParser> _courseParsers;
+        private readonly CourseHub _courseHub;
         private List<Course> _parsedCourses;
         private List<Course> _dbSavedCourses;
-        public CoursesBackgroundService(IServiceProvider serviceProvider)
+        public CoursesBackgroundService(IServiceProvider serviceProvider, CourseHub courseHub)
         {
             var type = typeof(ICourseParser);
 
@@ -22,6 +24,7 @@ namespace TelegramBot.API.BackgroundServices
 
             _courseParsers = parserTypes.Select(e => (ICourseParser)Activator.CreateInstance(e));
             _serviceProvider = serviceProvider;
+            _courseHub = courseHub;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -39,7 +42,7 @@ namespace TelegramBot.API.BackgroundServices
 
                         await DeleteOldCourses(_courseService);
 
-                        await AddNewParsedCourses(_courseService);
+                        await ProcessNewCourses(_courseService);
                     }
                 }
                 catch (Exception ex)
@@ -47,6 +50,7 @@ namespace TelegramBot.API.BackgroundServices
                     Console.WriteLine("Some problem in BG service!");
                     throw;
                 }
+
                 await Task.Delay(TimeSpan.FromHours(24));
             }
         }
@@ -55,15 +59,21 @@ namespace TelegramBot.API.BackgroundServices
             Console.WriteLine("Stopping BG Service!");
             return base.StopAsync(cancellationToken);
         }
-        private async Task AddNewParsedCourses(ICourseService _courseService)
+        private async Task ProcessNewCourses(ICourseService _courseService)
         {
-            foreach (var item in _parsedCourses)
+            var newCourses = _parsedCourses.Where(IsCourseNewToDb).ToList();
+
+            await _courseHub.NotifyAboutNewCourses(newCourses.ConvertToDto());
+
+            await Parallel.ForEachAsync(newCourses, async (course, _) =>
             {
-                if (ShouldCourseBeAddedToDb(item))
-                {
-                    await _courseService.AddCourse(item.ConvertToDto());
-                }
-            }
+                await AddNewCourse(_courseService, course);
+            });
+        }
+
+        private async Task AddNewCourse(ICourseService _courseService, Course course)
+        {
+            await _courseService.AddCourse(course.ConvertToDto());
         }
         private async Task DeleteOldCourses(ICourseService courseService)
         {
@@ -75,7 +85,7 @@ namespace TelegramBot.API.BackgroundServices
                 }
             }
         }
-        private bool ShouldCourseBeAddedToDb(Course course)
+        private bool IsCourseNewToDb(Course course)
         {
             if (_dbSavedCourses.Any(c => c.Link == course.Link))
             {
