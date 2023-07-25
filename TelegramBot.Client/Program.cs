@@ -1,7 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using System.Net.Http.Json;
 using TelegramBot.Client.Bot;
+using TelegramBot.Client.CommandsFactory;
+using TelegramBot.Client.Services;
+using TelegramBot.Client.Services.Interfaces;
 using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.Client
@@ -16,11 +20,16 @@ namespace TelegramBot.Client
                 .Build();
 
             string key = configuration.GetConnectionString("TelegramKey");
-
-            ClientBot bot = new(key);
-
+            CommandFactory factory = new CommandFactory();
+            HubConnection hub = new HubConnectionBuilder().WithUrl("https://localhost:7103/coursehub")
+                                    .Build();
+            
             try
             {
+                ClientBot bot = new ClientBot(key: key,
+                                          commandFactory: factory,
+                                          hubConnection: hub);
+
                 bot.StartLoopAsync(CancellationToken.None).Wait();
             }
             catch (Exception ex)

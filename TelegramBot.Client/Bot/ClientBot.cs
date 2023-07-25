@@ -9,6 +9,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.CommandsFactory;
 using TelegramBot.Client.Extensions;
+using TelegramBot.Client.Services;
 using TelegramBot.Client.Services.Interfaces;
 using TelegramBot.Shared.DTOs;
 using static System.Net.Mime.MediaTypeNames;
@@ -18,18 +19,17 @@ namespace TelegramBot.Client.Bot
     public class ClientBot
     {
         private readonly TelegramBotClient _bot;
-        private HubConnection _hubConnection;
-        private INewCourseNotifier _newCourseNotifier;
-        private CommandFactory _factory;
-        public ClientBot(string key) //TODO Fix configuration
+        private readonly HubConnection _hubConnection;
+        private readonly INewCourseNotifier _newCourseNotifier;
+        private readonly CommandFactory _factory;
+        public ClientBot(string key, CommandFactory commandFactory, HubConnection hubConnection)
         {
             _bot = new TelegramBotClient(key);
-            _factory = new CommandFactory();
+            _factory = commandFactory;
+            _hubConnection = hubConnection;
+            _newCourseNotifier = new NewCourseNotifier(bot: _bot, tagService: new TagService());
 
-            _hubConnection = new HubConnectionBuilder().WithUrl("https://localhost:7103/coursehub")
-                                    .Build();
             _hubConnection.On("GetNewAddedCoursesOnClient", (IEnumerable<CourseDto> courses) => _newCourseNotifier.Notify(courses));
-
         }
 
         public async Task StartLoopAsync(CancellationToken _cancellationToken)
