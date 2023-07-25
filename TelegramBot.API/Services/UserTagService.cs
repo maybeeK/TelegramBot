@@ -54,6 +54,11 @@ namespace TelegramBot.API.Services
             return tagsToDelete;
         }
 
+        public async Task<IEnumerable<UserTag>> GetAllUserTags()
+        {
+            return await _context.UserTags.ToListAsync();
+        }
+
         public async Task<IEnumerable<UserTag>> GetTagsByUserId(long userId)
         {
             return await _context.UserTags.Where(e=>e.UsertId==userId).ToListAsync();

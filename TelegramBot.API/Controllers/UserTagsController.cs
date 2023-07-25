@@ -23,7 +23,23 @@ namespace TelegramBot.API.Controllers
         {
             _userTagService = userTagService;
         }
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserTagDto>>> GetAllUserTags()
+        {
+            try
+            {
+                var tags = await _userTagService.GetAllUserTags();
 
+                var tagsDto = tags.
+                    ConvertToDto();
+
+                return Ok(tagsDto);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
+            }
+        }
         [HttpGet("{userId:long}")]
         public async Task<ActionResult<IEnumerable<UserTagDto>>> GetTagsByUserId(int userId)
         {
