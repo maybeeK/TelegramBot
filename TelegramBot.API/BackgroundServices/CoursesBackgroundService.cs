@@ -62,13 +62,14 @@ namespace TelegramBot.API.BackgroundServices
         private async Task ProcessNewCourses(ICourseService _courseService)
         {
             var newCourses = _parsedCourses.Where(IsCourseNewToDb).ToList();
+            var parallelOptions = new ParallelOptions() { MaxDegreeOfParallelism = 1 };
 
-            await _courseHub.NotifyAboutNewCourses(newCourses.ConvertToDto());
-
-            await Parallel.ForEachAsync(newCourses, async (course, _) =>
+            await Parallel.ForEachAsync(newCourses, parallelOptions, async (course, _) =>
             {
                 await AddNewCourse(_courseService, course);
             });
+
+            await _courseHub.NotifyAboutNewCourses(newCourses.ConvertToDto());
         }
 
         private async Task AddNewCourse(ICourseService _courseService, Course course)
