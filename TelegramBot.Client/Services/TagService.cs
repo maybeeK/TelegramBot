@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Bot.Types;
 using TelegramBot.Client.Services.Intervaces;
 using TelegramBot.Shared.DTOs;
 
@@ -98,6 +99,26 @@ namespace TelegramBot.Client.Services
         public void Dispose()
         {
             _httpClient.Dispose();
+        }
+
+        public async Task<IEnumerable<UserTagDto>> GetAllUserTags()
+        {
+            try
+            {
+                var responce = await _httpClient.GetAsync("api/UserTags");
+
+                if (responce.IsSuccessStatusCode)
+                {
+                    return await responce.Content.ReadFromJsonAsync<IEnumerable<UserTagDto>>();
+                }
+                
+                return Enumerable.Empty<UserTagDto>();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
