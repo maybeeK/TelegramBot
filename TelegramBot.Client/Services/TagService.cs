@@ -13,21 +13,23 @@ namespace TelegramBot.Client.Services
 {
     public class TagService : ITagService
     {
-        private const string BASE_URL = "https://localhost:7103/";
-        private const int MAX_TAGS_PER_USER = 1;
+        private readonly int MAX_TAGS_PER_USER; /*= 2;*/
 
         private readonly HttpClient _httpClient;
-        public TagService()
+        public TagService(string baseApiUrl, int maxTagsPerUser)
         {
-            _httpClient = new HttpClient() { 
-                    BaseAddress = new Uri(BASE_URL)
-                };
+            _httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(baseApiUrl)
+            };
+
+            MAX_TAGS_PER_USER = maxTagsPerUser;
         }
         public async Task<bool> AddUserTags(long userId, IEnumerable<UserTagDto> userTags)
         {
             try
             {
-                int userTagsAmount = (await GetUserTags(userId)).Count();
+                int userTagsAmount = (await GetTagsByUserId(userId)).Count();
                 if (userTagsAmount + userTags.Count() > MAX_TAGS_PER_USER)
                 {
                     return false;
@@ -49,7 +51,7 @@ namespace TelegramBot.Client.Services
                 throw;
             }
         }
-        private async Task<IEnumerable<UserTagDto>> GetUserTags(long userId)
+        public async Task<IEnumerable<UserTagDto>> GetTagsByUserId(long userId)
         {
             try
             {

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 using TelegramBot.Client.Services.Intervaces;
 using TelegramBot.Shared.DTOs;
 
@@ -12,14 +7,13 @@ namespace TelegramBot.Client.Services
 {
     public class CourseService : ICourseService
     {
-        private const string BASE_URL = "https://localhost:7103/";
         private readonly HttpClient _httpClient;
-        public CourseService()
+        public CourseService(string baseApiUrl)
         {
-            _httpClient = new HttpClient() { 
-                    BaseAddress = new Uri(BASE_URL)
-                };
-
+            _httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(baseApiUrl)
+            };
         }
         public void Dispose()
         {
