@@ -11,21 +11,26 @@ using TelegramBot.Client.Services.ServiceFactory;
 
 namespace TelegramBot.Client.Commands
 {
-    public class ClearTagsCommand : ICommand
+    public class MyTagsCommand : ICommand
     {
         public async Task<string> Process(string? body = null, long? userId = null, ParseMode? parseMode = null)
         {
-            using (ITagService _tagService = TagServiceFartory.GetTagService<TagService>())
+            using (ITagService tagService = TagServiceFartory.GetTagService<TagService>())
             {
-                var cleared = await _tagService.ClearUserTags(userId.Value);
+                var userTags = await tagService.GetTagsByUserId(userId.Value);
 
-                if (cleared)
+                if (userTags.Any())
                 {
-                    return "Tags cleared!";
+                    StringBuilder sb = new StringBuilder("Your tags:\n");
+                    foreach (var item in userTags)
+                    {
+                        sb.AppendLine(item.Tag);
+                    }
+                    return sb.ToString();
                 }
                 else
                 {
-                    return "Can't cleat tags(((";
+                    return "You have no tags(";
                 }
             }
         }

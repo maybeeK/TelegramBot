@@ -7,6 +7,7 @@ using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.Commands.Interfaces;
 using TelegramBot.Client.Services;
 using TelegramBot.Client.Services.Intervaces;
+using TelegramBot.Client.Services.ServiceFactory;
 
 namespace TelegramBot.Client.Commands
 {
@@ -20,7 +21,7 @@ namespace TelegramBot.Client.Commands
             }
             else
             {
-                using (ICourseService courseService = new CourseService())
+                using (ICourseService courseService = CourseServiceFactory.GetCourseService<CourseService>())
                 {
                     StringBuilder sb = new StringBuilder();
                     var courses = (await courseService.GetCoursesByTag(body)).ToList();

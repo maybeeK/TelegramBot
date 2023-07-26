@@ -15,7 +15,10 @@ namespace TelegramBot.Client.Commands
             return Task.FromResult(
                 $"/start - to start\n" +
                 $"/help - all commands and usage\n" +
-                $"other...."
+                $"/check <tag> - check existing courses by tag\n" +
+                $"/add <tags> - add tags for notification\n" +
+                $"/clear - delete all tags\n" +
+                $"/mytags - check your tags"
             );
         }
     }

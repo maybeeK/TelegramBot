@@ -7,6 +7,7 @@ using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.Commands.Interfaces;
 using TelegramBot.Client.Services;
 using TelegramBot.Client.Services.Intervaces;
+using TelegramBot.Client.Services.ServiceFactory;
 using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.Client.Commands
@@ -22,7 +23,7 @@ namespace TelegramBot.Client.Commands
                 return $"Usage: /add <tags>";
             }
 
-            using (ITagService _tagService = new TagService())
+            using (ITagService _tagService = TagServiceFartory.GetTagService<TagService>())
             {
                 var userTags = stringTags.
                     Select(e=>new UserTagDto()
