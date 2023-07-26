@@ -22,12 +22,12 @@ namespace TelegramBot.Client.Bot
         private readonly HubConnection _hubConnection;
         private readonly INewCourseNotifier _newCourseNotifier;
         private readonly CommandFactory _factory;
-        public ClientBot(string key, CommandFactory commandFactory, HubConnection hubConnection)
+        public ClientBot(TelegramBotClient bot,CommandFactory commandFactory, HubConnection hubConnection, INewCourseNotifier newCourseNotifier)
         {
-            _bot = new TelegramBotClient(key);
+            _bot = bot;
             _factory = commandFactory;
             _hubConnection = hubConnection;
-            _newCourseNotifier = new NewCourseNotifier(bot: _bot, tagService: new TagService());
+            _newCourseNotifier = newCourseNotifier;
 
             _hubConnection.On("GetNewAddedCoursesOnClient", (IEnumerable<CourseDto> courses) => _newCourseNotifier.Notify(courses));
         }

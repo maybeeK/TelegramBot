@@ -10,8 +10,8 @@ namespace TelegramBot.API.BackgroundServices
     public class CoursesBackgroundService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IEnumerable<ICourseParser> _courseParsers;
         private readonly CourseHub _courseHub;
+        private IEnumerable<ICourseParser> _courseParsers;
         private List<Course> _parsedCourses;
         private List<Course> _dbSavedCourses;
         public CoursesBackgroundService(IServiceProvider serviceProvider, CourseHub courseHub)
@@ -22,7 +22,7 @@ namespace TelegramBot.API.BackgroundServices
                                 .SelectMany(s => s.GetTypes())
                                 .Where(p => type.IsAssignableFrom(p) && !p.IsInterface);
 
-            _courseParsers = parserTypes.Select(e => (ICourseParser)Activator.CreateInstance(e));
+            _courseParsers = parserTypes.Select(e => (ICourseParser)Activator.CreateInstance(e))!;
             _serviceProvider = serviceProvider;
             _courseHub = courseHub;
         }
