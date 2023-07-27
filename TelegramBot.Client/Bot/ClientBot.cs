@@ -74,7 +74,7 @@ namespace TelegramBot.Client.Bot
                 string stringCommand = string.Empty;
                 string body = string.Empty;
                 string replyText = string.Empty;
-                ParseMode? parseMode = ParseMode.Markdown;
+                ParseMode? parseMode = null;
                 Console.WriteLine(update.Message.Chat.Id + " < " + update.Message.From.Username + " - " + gettingText);
 
                 if (gettingText.HasCommand())
@@ -89,7 +89,7 @@ namespace TelegramBot.Client.Bot
 
                 var command = _factory.Create(stringCommand);
 
-                replyText = await command.Process(body: body, userId: update.Message.Chat.Id, parseMode: parseMode);
+                replyText = await command.Process(body: body, userId: update.Message.Chat.Id, parseMode: ref parseMode);
 ;
                 await bot.SendTextMessageAsync(update.Message.Chat.Id, replyText, disableWebPagePreview: true, parseMode: parseMode);
             }

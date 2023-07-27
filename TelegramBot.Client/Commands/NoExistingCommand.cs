@@ -10,7 +10,7 @@ namespace TelegramBot.Client.Commands
 {
     public class NoExistingCommand:ICommand
     {
-        public Task<string> Process(string? body = null, long? userId = null, ParseMode? parseMode = null)
+        public Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
         {
             return Task.FromResult(
                 $"There is no such command!\n" +

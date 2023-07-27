@@ -9,6 +9,6 @@ namespace TelegramBot.Client.Commands.Interfaces
 {
     public interface ICommand
     {
-        Task<string> Process(string? body = null,long? userId = null ,ParseMode? parseMode = null);
+        Task<string> Process(string? body,long? userId , ref ParseMode? parseMode);
     }
 }

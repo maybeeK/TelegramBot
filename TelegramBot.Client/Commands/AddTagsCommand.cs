@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.Commands.Interfaces;
 using TelegramBot.Client.Services;
@@ -14,29 +15,35 @@ namespace TelegramBot.Client.Commands
 {
     public class AddTagsCommand : ICommand
     {
-        public async Task<string> Process(string? body = null, long? userId = null, ParseMode? parseMode = null)
+        public Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
         {
             var stringTags = body.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             if (stringTags.Length < 1)
             {
-                return $"Usage: /add <tags>";
+                return Task.FromResult($"Usage: /add <tags>");
             }
 
+            return ProcessAsync(stringTags, userId.Value);
+        }
+
+        private async Task<string> ProcessAsync(string[] stringTags, long userId)
+        {
             using (ITagService _tagService = TagServiceFartory.GetTagService<TagService>())
             {
                 var userTags = stringTags.
-                    Select(e=>new UserTagDto()
-                        { 
-                            UsertId = userId.Value,
-                            Tag = e}
-                        );
+                    Select(e => new UserTagDto()
+                    {
+                        UsertId = userId,
+                        Tag = e
+                    }
+                );
 
-                var added = await _tagService.AddUserTags(userId.Value, userTags);
+                var added = await _tagService.AddUserTags(userId, userTags);
 
                 if (added)
                 {
-                    return $"Tags added successfully!";
+                    return $"Tags {string.Join(' ' ,userTags.Select(e=>e.Tag))} added successfully!";
                 }
                 else
                 {
@@ -44,5 +51,6 @@ namespace TelegramBot.Client.Commands
                 }
             }
         }
+
     }
 }

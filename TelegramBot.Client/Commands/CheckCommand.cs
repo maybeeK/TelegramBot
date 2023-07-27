@@ -13,30 +13,34 @@ namespace TelegramBot.Client.Commands
 {
     public class CheckCommand : ICommand
     {
-        public async Task<string> Process(string? body = null, long? userId = null, ParseMode? parseMode = null)
+        public Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
         {
             if (!IsBodyValid(body))
             {
-                return $"Usage: /check <tag>";
+                return Task.FromResult($"Usage: /check <tag>");
             }
             else
             {
-                using (ICourseService courseService = CourseServiceFactory.GetCourseService<CourseService>())
-                {
-                    StringBuilder sb = new StringBuilder();
-                    var courses = (await courseService.GetCoursesByTag(body)).ToList();
-
-                    sb.AppendLine($"Founded {courses.Count()} courses");
-                    courses.ForEach((c) =>
-                    {
-                        sb.AppendLine($"[{c.Name}]({c.Link}) - {c.Description}");
-                    });
-
-                    return sb.ToString();
-                }
+                parseMode = ParseMode.Markdown;
+                return ProcessAsync(body);
             }
         }
+        private async Task<string> ProcessAsync(string body)
+        {
+            using (ICourseService courseService = CourseServiceFactory.GetCourseService<CourseService>())
+            {
+                StringBuilder sb = new StringBuilder();
+                var courses = (await courseService.GetCoursesByTag(body)).ToList();
 
+                sb.AppendLine($"Founded {courses.Count()} courses");
+                courses.ForEach((c) =>
+                {
+                    sb.AppendLine($"[{c.Name}]({c.Link}) - {c.Description}");
+                });
+
+                return sb.ToString();
+            }
+        }
         private bool IsBodyValid(string body)
         {
             return !string.IsNullOrEmpty(body) && body.Split(" ").Length < 2;
