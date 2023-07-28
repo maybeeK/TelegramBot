@@ -1,24 +1,17 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using TelegramBot.Client.CommandsFactory;
 using TelegramBot.Client.CommandsFactory.Abstract;
 using TelegramBot.Client.Extensions;
-using TelegramBot.Client.Services;
 using TelegramBot.Client.Services.Interfaces;
 using TelegramBot.Shared.DTOs;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TelegramBot.Client.Bot
 {
     public class ClientBot
     {
+        private const int MAX_PARALLEL_PROCESSING = 10;
         private readonly TelegramBotClient _bot;
         private readonly HubConnection _hubConnection;
         private readonly INewCourseNotifier _newCourseNotifier;
@@ -35,13 +28,13 @@ namespace TelegramBot.Client.Bot
 
         public async Task StartLoopAsync(CancellationToken _cancellationToken)
         {
+            Console.WriteLine("Started at " + DateTime.Now);
             await _hubConnection.StartAsync();
 
             int offset = 0;
-            Console.WriteLine("Started at " + DateTime.Now);
             while (!_cancellationToken.IsCancellationRequested)
             {
-                var updates = new Update[0];
+                var updates = Enumerable.Empty<Update>();
                 try
                 {
                     updates = await _bot.GetUpdatesAsync(offset: offset);
@@ -56,11 +49,12 @@ namespace TelegramBot.Client.Bot
                     Console.WriteLine("ERROR WHILE GETTIGN UPDATES - " + ex);
                 }
 
-                foreach (var update in updates)
+                var opts = new ParallelOptions() { MaxDegreeOfParallelism = MAX_PARALLEL_PROCESSING };
+                await Parallel.ForEachAsync(updates, opts, async (update, _) =>
                 {
-                    offset = update.Id + 1;
-                    ProcessUpdate(_bot, update);
-                }
+                    offset= ++update.Id;
+                    await ProcessUpdate(_bot, update);
+                });
 
                 await Task.Delay(1000);
             }
@@ -76,7 +70,6 @@ namespace TelegramBot.Client.Bot
                 string body = string.Empty;
                 string replyText = string.Empty;
                 ParseMode? parseMode = null;
-                Console.WriteLine(update.Message.Chat.Id + " < " + update.Message.From.Username + " - " + gettingText);
 
                 if (gettingText.HasCommand())
                 {
