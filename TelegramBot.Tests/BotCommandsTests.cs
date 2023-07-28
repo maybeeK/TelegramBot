@@ -9,6 +9,7 @@ using TelegramBot.Client.Commands;
 using TelegramBot.Client.Commands.Interfaces;
 using TelegramBot.Client.CommandsFactory;
 using TelegramBot.Client.Extensions;
+using TelegramBot.Client.Services.ServiceFactory;
 
 namespace TelegramBot.Tests
 {
@@ -63,7 +64,7 @@ namespace TelegramBot.Tests
         {
             // Arrange
             string strCommand = "start";
-            CommandFactory factory = new CommandFactory();
+            CommandFactory factory = new CommandFactory(new TagServiceFartory("https://existing/link/", 1), new CourseServiceFactory("https://existing/link/"));
 
             // Act
             ICommand command = factory.Create(strCommand);
@@ -77,7 +78,7 @@ namespace TelegramBot.Tests
         {
             // Arrange
             string strCommand = "help";
-            CommandFactory factory = new CommandFactory();
+            CommandFactory factory = new CommandFactory(new TagServiceFartory("https://existing/link/", 1), new CourseServiceFactory("https://existing/link/"));
 
             // Act
             ICommand command = factory.Create(strCommand);
@@ -91,7 +92,7 @@ namespace TelegramBot.Tests
         {
             // Arrange
             string strCommand = "itDoesntExist";
-            CommandFactory factory = new CommandFactory();
+            CommandFactory factory = new CommandFactory(new TagServiceFartory("https://existing/link/", 1), new CourseServiceFactory("https://existing/link/"));
 
             // Act
             ICommand command = factory.Create(strCommand);

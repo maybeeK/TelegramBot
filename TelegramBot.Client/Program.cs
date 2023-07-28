@@ -5,9 +5,11 @@ using System.Net.Http.Json;
 using Telegram.Bot;
 using TelegramBot.Client.Bot;
 using TelegramBot.Client.CommandsFactory;
+using TelegramBot.Client.CommandsFactory.Abstract;
 using TelegramBot.Client.Services;
 using TelegramBot.Client.Services.Interfaces;
 using TelegramBot.Client.Services.ServiceFactory;
+using TelegramBot.Client.Services.ServiceFactory.Abstact;
 using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.Client
@@ -20,13 +22,20 @@ namespace TelegramBot.Client
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
+            const string BASE_API_URL = "https://localhost:7103/";
+            const int TAGS_PER_USER = 1;
 
             string key = configuration.GetConnectionString("TelegramKey")!;
             TelegramBotClient telegramBot = new TelegramBotClient(key);
-            CommandFactory factory = new CommandFactory();
-            HubConnection hub = new HubConnectionBuilder().WithUrl("https://localhost:7103/coursehub")
+
+            CourseServiceFactoryBase courseServiceFactory = new CourseServiceFactory(baseApiUrl: BASE_API_URL);
+            TagServiceFactoryBase tagServiceFactory = new TagServiceFartory(baseApiUrl: BASE_API_URL, tagsPerUser: TAGS_PER_USER);
+
+            CommadFactoryBase factory = new CommandFactory(courseServiceFactoryBase: courseServiceFactory, tagServiceFactoryBase: tagServiceFactory);
+            HubConnection hub = new HubConnectionBuilder().WithUrl($"{BASE_API_URL}coursehub")
                                     .Build();
-            INewCourseNotifier newCourseNotifier = new NewCourseNotifier(telegramBot, TagServiceFartory.GetTagService<TagService>());
+
+            INewCourseNotifier newCourseNotifier = new NewCourseNotifier(telegramBot, tagServiceFactory.CreateTagService());
 
             try
             {

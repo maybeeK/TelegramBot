@@ -4,14 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TelegramBot.Client.Services.Intervaces;
+using TelegramBot.Client.Services.ServiceFactory.Abstact;
 
 namespace TelegramBot.Client.Services.ServiceFactory
 {
-    public static class CourseServiceFactory
+    public class CourseServiceFactory : CourseServiceFactoryBase
     {
-        public static T GetCourseService<T>() where T : ICourseService
+        private readonly string _baseApiUrl;
+        public CourseServiceFactory(string baseApiUrl)
         {
-            return (T)(object)new CourseService(baseApiUrl: "https://localhost:7103/");
+            _baseApiUrl= baseApiUrl;
+        }
+        public override ICourseService CreateCourseService()
+        {
+            return new CourseService(baseApiUrl: _baseApiUrl);
         }
     }
 }

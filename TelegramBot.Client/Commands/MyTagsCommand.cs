@@ -1,42 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot.Types;
+﻿using System.Text;
 using Telegram.Bot.Types.Enums;
-using TelegramBot.Client.Commands.Interfaces;
-using TelegramBot.Client.Services;
+using TelegramBot.Client.Commands.Abstact;
 using TelegramBot.Client.Services.Intervaces;
-using TelegramBot.Client.Services.ServiceFactory;
 
 namespace TelegramBot.Client.Commands
 {
-    public class MyTagsCommand : ICommand
+    public class MyTagsCommand : CommandBase
     {
-        public Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
+        public MyTagsCommand(ITagService tagService, ICourseService courseService) : base(tagService, courseService)
+        {
+
+        }
+        public override Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
         {
             return ProcessAsync(userId.Value);
         }
         private async Task<string> ProcessAsync(long userId)
         {
-            using (ITagService tagService = TagServiceFartory.GetTagService<TagService>())
-            {
-                var userTags = await tagService.GetTagsByUserId(userId);
+            var userTags = await _tagService.GetTagsByUserId(userId);
 
-                if (userTags.Any())
+            if (userTags.Any())
+            {
+                StringBuilder sb = new StringBuilder("Your tags:\n");
+                foreach (var item in userTags)
                 {
-                    StringBuilder sb = new StringBuilder("Your tags:\n");
-                    foreach (var item in userTags)
-                    {
-                        sb.AppendLine(item.Tag);
-                    }
-                    return sb.ToString();
+                    sb.AppendLine(item.Tag);
                 }
-                else
-                {
-                    return "You have no tags(";
-                }
+                return sb.ToString();
+            }
+            else
+            {
+                return "You have no tags(";
             }
         }
     }

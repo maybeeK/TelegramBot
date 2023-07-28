@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using TelegramBot.Client.Commands.Interfaces;
-using TelegramBot.Client.Services;
+﻿using Telegram.Bot.Types.Enums;
+using TelegramBot.Client.Commands.Abstact;
 using TelegramBot.Client.Services.Intervaces;
-using TelegramBot.Client.Services.ServiceFactory;
 using TelegramBot.Shared.DTOs;
 
 namespace TelegramBot.Client.Commands
 {
-    public class AddTagsCommand : ICommand
+    public class AddTagsCommand : CommandBase
     {
-        public Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
+        public AddTagsCommand(ITagService tagService, ICourseService courseService) : base(tagService, courseService)
+        {
+
+        }
+        public override Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
         {
             var stringTags = body.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
@@ -29,26 +25,23 @@ namespace TelegramBot.Client.Commands
 
         private async Task<string> ProcessAsync(string[] stringTags, long userId)
         {
-            using (ITagService _tagService = TagServiceFartory.GetTagService<TagService>())
+            var userTags = stringTags.
+                Select(e => new UserTagDto()
+                {
+                    UsertId = userId,
+                    Tag = e
+                }
+            );
+
+            var added = await _tagService.AddUserTags(userId, userTags);
+
+            if (added)
             {
-                var userTags = stringTags.
-                    Select(e => new UserTagDto()
-                    {
-                        UsertId = userId,
-                        Tag = e
-                    }
-                );
-
-                var added = await _tagService.AddUserTags(userId, userTags);
-
-                if (added)
-                {
-                    return $"Tags {string.Join(' ' ,userTags.Select(e=>e.Tag))} added successfully!";
-                }
-                else
-                {
-                    return $"Can't add too much tags!";
-                }
+                return $"Tags {string.Join(' ', userTags.Select(e => e.Tag))} added successfully!";
+            }
+            else
+            {
+                return $"Can't add too much tags!";
             }
         }
 

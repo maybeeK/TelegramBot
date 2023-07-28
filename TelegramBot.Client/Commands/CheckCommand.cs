@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Telegram.Bot.Types.Enums;
-using TelegramBot.Client.Commands.Interfaces;
-using TelegramBot.Client.Services;
+using TelegramBot.Client.Commands.Abstact;
 using TelegramBot.Client.Services.Intervaces;
-using TelegramBot.Client.Services.ServiceFactory;
 
 namespace TelegramBot.Client.Commands
 {
-    public class CheckCommand : ICommand
+    public class CheckCommand : CommandBase
     {
-        public Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
+        public CheckCommand(ITagService tagService, ICourseService courseService) : base(tagService, courseService)
+        {
+
+        }
+        public override Task<string> Process(string? body, long? userId, ref ParseMode? parseMode)
         {
             if (!IsBodyValid(body))
             {
@@ -27,19 +25,18 @@ namespace TelegramBot.Client.Commands
         }
         private async Task<string> ProcessAsync(string body)
         {
-            using (ICourseService courseService = CourseServiceFactory.GetCourseService<CourseService>())
+
+            StringBuilder sb = new StringBuilder();
+            var courses = (await _courseService.GetCoursesByTag(body)).ToList();
+
+            sb.AppendLine($"Founded {courses.Count()} courses");
+            courses.ForEach((c) =>
             {
-                StringBuilder sb = new StringBuilder();
-                var courses = (await courseService.GetCoursesByTag(body)).ToList();
+                sb.AppendLine($"[{c.Name}]({c.Link}) - {c.Description}");
+            });
 
-                sb.AppendLine($"Founded {courses.Count()} courses");
-                courses.ForEach((c) =>
-                {
-                    sb.AppendLine($"[{c.Name}]({c.Link}) - {c.Description}");
-                });
+            return sb.ToString();
 
-                return sb.ToString();
-            }
         }
         private bool IsBodyValid(string body)
         {

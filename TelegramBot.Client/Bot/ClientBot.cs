@@ -8,6 +8,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.CommandsFactory;
+using TelegramBot.Client.CommandsFactory.Abstract;
 using TelegramBot.Client.Extensions;
 using TelegramBot.Client.Services;
 using TelegramBot.Client.Services.Interfaces;
@@ -21,8 +22,8 @@ namespace TelegramBot.Client.Bot
         private readonly TelegramBotClient _bot;
         private readonly HubConnection _hubConnection;
         private readonly INewCourseNotifier _newCourseNotifier;
-        private readonly CommandFactory _factory;
-        public ClientBot(TelegramBotClient bot,CommandFactory commandFactory, HubConnection hubConnection, INewCourseNotifier newCourseNotifier)
+        private readonly CommadFactoryBase _factory;
+        public ClientBot(TelegramBotClient bot , CommadFactoryBase commandFactory, HubConnection hubConnection, INewCourseNotifier newCourseNotifier)
         {
             _bot = bot;
             _factory = commandFactory;

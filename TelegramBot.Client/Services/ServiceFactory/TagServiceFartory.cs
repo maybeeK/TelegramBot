@@ -4,15 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TelegramBot.Client.Services.Intervaces;
+using TelegramBot.Client.Services.ServiceFactory.Abstact;
 
 namespace TelegramBot.Client.Services.ServiceFactory
 {
-    public static class TagServiceFartory
+    public class TagServiceFartory : TagServiceFactoryBase
     {
-        public static T GetTagService<T>() where T : ITagService
+        private readonly string _baseApiUrl;
+        private readonly int _tagsPerUser;
+        public TagServiceFartory(string baseApiUrl, int tagsPerUser) { 
+            _baseApiUrl = baseApiUrl;
+            _tagsPerUser = tagsPerUser;
+        }
+        public override ITagService CreateTagService()
         {
-            return (T)(object)new TagService(baseApiUrl: "https://localhost:7103/",
-                                  maxTagsPerUser: 1);
+            return new TagService(baseApiUrl: _baseApiUrl, maxTagsPerUser: _tagsPerUser);
         }
     }
 }
