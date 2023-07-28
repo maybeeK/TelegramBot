@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Bot.Types.Enums;
+﻿using Telegram.Bot.Types.Enums;
 using TelegramBot.Client.Commands.Abstact;
-using TelegramBot.Client.Commands.Interfaces;
 using TelegramBot.Client.Services.Intervaces;
 
 namespace TelegramBot.Client.Commands

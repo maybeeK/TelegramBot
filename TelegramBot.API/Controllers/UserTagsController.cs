@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TelegramBot.API.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 using TelegramBot.API.Entities;
 using TelegramBot.API.Extensions;
 using TelegramBot.API.Services.Interfaces;

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using TelegramBot.API.Data;
-using Microsoft.EntityFrameworkCore.InMemory;
 using TelegramBot.API.Entities;
 using TelegramBot.API.Services;
 using TelegramBot.Shared.DTOs;

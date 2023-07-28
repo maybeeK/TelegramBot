@@ -2,7 +2,6 @@
 using TelegramBot.API.Entities;
 using TelegramBot.API.Extensions;
 using TelegramBot.API.Hubs;
-using TelegramBot.API.Services;
 using TelegramBot.API.Services.Interfaces;
 
 namespace TelegramBot.API.BackgroundServices

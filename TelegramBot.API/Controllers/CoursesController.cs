@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TelegramBot.API.Entities;
 using TelegramBot.API.Extensions;
 using TelegramBot.API.Services.Interfaces;
 using TelegramBot.Shared.DTOs;

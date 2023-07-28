@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TelegramBot.Client.Extensions
+﻿namespace TelegramBot.Client.Extensions
 {
     public static class CommandExtensions
     {

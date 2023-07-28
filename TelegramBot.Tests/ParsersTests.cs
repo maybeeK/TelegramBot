@@ -1,13 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TelegramBot.API.BackgroundServices;
-using TelegramBot.API.CourseParsers;
+﻿using TelegramBot.API.CourseParsers;
 using TelegramBot.API.Entities;
-using TelegramBot.API.Services;
 
 namespace TelegramBot.Tests
 {

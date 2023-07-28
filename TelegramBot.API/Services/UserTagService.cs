@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TelegramBot.API.Data;
 using TelegramBot.API.Entities;
 using TelegramBot.API.Services.Interfaces;
