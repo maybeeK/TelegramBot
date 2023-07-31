@@ -16,7 +16,8 @@ namespace TelegramBot.Client.Bot
         private readonly HubConnection _hubConnection;
         private readonly INewCourseNotifier _newCourseNotifier;
         private readonly CommadFactoryBase _factory;
-        public ClientBot(TelegramBotClient bot , CommadFactoryBase commandFactory, HubConnection hubConnection, INewCourseNotifier newCourseNotifier)
+        public static ClientBotBuilder CreateBuilder() => new ClientBotBuilder();
+        internal ClientBot(TelegramBotClient bot , CommadFactoryBase commandFactory, HubConnection hubConnection, INewCourseNotifier newCourseNotifier)
         {
             _bot = bot;
             _factory = commandFactory;

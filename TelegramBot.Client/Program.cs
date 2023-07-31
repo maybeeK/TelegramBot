@@ -3,11 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
 using TelegramBot.Client.Bot;
 using TelegramBot.Client.CommandsFactory;
-using TelegramBot.Client.CommandsFactory.Abstract;
 using TelegramBot.Client.Services;
-using TelegramBot.Client.Services.Interfaces;
 using TelegramBot.Client.Services.ServiceFactory;
-using TelegramBot.Client.Services.ServiceFactory.Abstact;
 
 namespace TelegramBot.Client
 {
@@ -24,23 +21,21 @@ namespace TelegramBot.Client
 
             string key = configuration.GetConnectionString("TelegramKey")!;
             TelegramBotClient telegramBot = new TelegramBotClient(key);
-
-            CourseServiceFactoryBase courseServiceFactory = new CourseServiceFactory(baseApiUrl: BASE_API_URL);
-            TagServiceFactoryBase tagServiceFactory = new TagServiceFartory(baseApiUrl: BASE_API_URL, tagsPerUser: TAGS_PER_USER);
-
-            CommadFactoryBase factory = new CommandFactory(courseServiceFactoryBase: courseServiceFactory, tagServiceFactoryBase: tagServiceFactory);
             HubConnection hub = new HubConnectionBuilder().WithUrl($"{BASE_API_URL}coursehub")
                                     .Build();
 
-            INewCourseNotifier newCourseNotifier = new NewCourseNotifier(telegramBot, tagServiceFactory.CreateTagService());
+            var builder = ClientBot.CreateBuilder();
 
+            builder.SetTelegramBot(telegramBot);
+            builder.SetHubConnection(hub);
+            builder.SetCourseServiceFactory<CourseServiceFactory>(BASE_API_URL);
+            builder.SetTagServiceFactory<TagServiceFartory>(BASE_API_URL, TAGS_PER_USER);
+            builder.SetCommandFactory<CommandFactory>();
+            builder.SetNewCourseNotifier<NewCourseNotifier>();
+
+            var bot = builder.Build();
             try
             {
-                ClientBot bot = new ClientBot(bot: telegramBot,
-                                          commandFactory: factory,
-                                          hubConnection: hub,
-                                          newCourseNotifier: newCourseNotifier);
-
                 bot.StartLoopAsync(CancellationToken.None).Wait();
             }
             catch (Exception ex)
